@@ -1,0 +1,33 @@
+import urllib.request
+import matplotlib.pyplot as plt
+import cv2
+
+url = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2etw8L9MxcduCxkNafEiiIDmQ7XobY5r2svjkOV6pTg&s'
+image_path = 'imagem_teste.jpg'
+
+req = urllib.request.Request(
+    url,
+    headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+)
+
+try:
+    with urllib.request.urlopen(req) as response, open(image_path, 'wb') as out_file:
+        out_file.write(response.read())
+except Exception as e:
+    pass
+
+img = cv2.imread(image_path)
+
+if img is not None:
+    idx, small_gray = gameboy_filter(img, dither='floyd', use_lowpass=True, contrast=True)
+    img_gameboy = apply_palette(idx)
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+    axes[0].imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    axes[0].axis('off')
+    
+    axes[1].imshow(img_gameboy)
+    axes[1].axis('off')
+    
+    plt.tight_layout()
+    plt.show()
